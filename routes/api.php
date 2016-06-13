@@ -14,6 +14,10 @@ Route::middleware(['throttle:write'])->group(function () {
     // Password Reset
     Route::post('/forgot-password', [\App\Http\Controllers\ResetPasswordController::class, 'forgotPassword']);
     Route::post('/reset-password', [\App\Http\Controllers\ResetPasswordController::class, 'resetPassword']);
+
+    // Public Banner Routes
+    Route::get('/banners', [\App\Http\Controllers\BannerController::class, 'index']);
+    Route::get('/banners/{id}', [\App\Http\Controllers\BannerController::class, 'show']);
 });
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -51,5 +55,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Admin Only Routes
     Route::middleware(['role:admin'])->group(function () {
         Route::post('/admin/users/{user}/promote', [\App\Http\Controllers\AdminController::class, 'promote']);
+
+        // Admin Banner Management
+        Route::post('/banners', [\App\Http\Controllers\BannerController::class, 'store']);
+        Route::post('/banners/{id}', [\App\Http\Controllers\BannerController::class, 'update']); // Use POST for file upload with method spoofing if needed, or stick to standard Laravel handling
+        Route::delete('/banners/{id}', [\App\Http\Controllers\BannerController::class, 'destroy']);
     });
 });

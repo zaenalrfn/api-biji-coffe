@@ -40,9 +40,18 @@ class ProductController extends Controller implements HasMiddleware
             'subtitle' => 'nullable|string|max:255',
             'price' => 'required|numeric',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image_url' => 'nullable|url',
         ]);
 
-        if ($request->hasFile('image')) {
+        if ($request->filled('image_url') && !$request->hasFile('image')) {
+            $url = $request->image_url;
+            $contents = @file_get_contents($url);
+            if ($contents) {
+                $name = 'products/' . \Illuminate\Support\Str::random(40) . '.jpg';
+                \Illuminate\Support\Facades\Storage::disk('public')->put($name, $contents);
+                $validatedData['image'] = $name;
+            }
+        } elseif ($request->hasFile('image')) {
             $path = $request->file('image')->store('products', 'public');
             $validatedData['image'] = $path;
         }
@@ -69,9 +78,23 @@ class ProductController extends Controller implements HasMiddleware
             'subtitle' => 'nullable|string|max:255',
             'price' => 'sometimes|numeric',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image_url' => 'nullable|url',
         ]);
 
-        if ($request->hasFile('image')) {
+        if ($request->filled('image_url') && !$request->hasFile('image')) {
+            // Delete old image if exists
+            if ($product->image && \Illuminate\Support\Facades\Storage::disk('public')->exists($product->image)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($product->image);
+            }
+
+            $url = $request->image_url;
+            $contents = @file_get_contents($url);
+            if ($contents) {
+                $name = 'products/' . \Illuminate\Support\Str::random(40) . '.jpg';
+                \Illuminate\Support\Facades\Storage::disk('public')->put($name, $contents);
+                $validatedData['image'] = $name;
+            }
+        } elseif ($request->hasFile('image')) {
             // Delete old image if exists
             if ($product->image && \Illuminate\Support\Facades\Storage::disk('public')->exists($product->image)) {
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($product->image);

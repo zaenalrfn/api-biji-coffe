@@ -47,4 +47,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead']);
     Route::post('/notifications/read-all', [\App\Http\Controllers\NotificationController::class, 'markAllRead']);
     Route::delete('/notifications/delete-all', [\App\Http\Controllers\NotificationController::class, 'deleteAll']);
+
+    // Admin Only Routes
+    Route::middleware(['role:admin'])->group(function () {
+        Route::post('/admin/users/{user}/promote', [\App\Http\Controllers\AdminController::class, 'promote']);
+    });
 });

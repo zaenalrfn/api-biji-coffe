@@ -43,6 +43,15 @@ class CartController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        $cartItem = CartItem::where('user_id', Auth::id())->with('product')->findOrFail($id);
+        return response()->json($cartItem);
+    }
+
+    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)

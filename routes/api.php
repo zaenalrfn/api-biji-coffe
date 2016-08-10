@@ -10,6 +10,14 @@ Route::middleware(['throttle:write'])->group(function () {
 
     // Public Midtrans Webhook
     Route::post('/midtrans/callback', [\App\Http\Controllers\MidtransCallbackController::class, 'handle']);
+
+    // Password Reset
+    Route::post('/forgot-password', [\App\Http\Controllers\ResetPasswordController::class, 'forgotPassword']);
+    Route::post('/reset-password', [\App\Http\Controllers\ResetPasswordController::class, 'resetPassword']);
+
+    // Public Banner Routes
+    Route::get('/banners', [\App\Http\Controllers\BannerController::class, 'index']);
+    Route::get('/banners/{id}', [\App\Http\Controllers\BannerController::class, 'show']);
 });
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -24,7 +32,10 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::get('/user', function (Request $request) {
-        return $request->user();
+        $user = $request->user();
+        return response()->json(array_merge($user->toArray(), [
+            'roles' => $user->getRoleNames()
+        ]));
     });
 
     Route::apiResource('categories', \App\Http\Controllers\CategoryController::class)->only(['index', 'show']);
@@ -35,4 +46,41 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/wishlist', [\App\Http\Controllers\WishlistController::class, 'index']);
     Route::post('/wishlist', [\App\Http\Controllers\WishlistController::class, 'store']);
     Route::delete('/wishlist/{product_id}', [\App\Http\Controllers\WishlistController::class, 'destroy']);
+
+    Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index']);
+    Route::post('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead']);
+    Route::post('/notifications/read-all', [\App\Http\Controllers\NotificationController::class, 'markAllRead']);
+    Route::delete('/notifications/delete-all', [\App\Http\Controllers\NotificationController::class, 'deleteAll']);
+
+    // Public Store Routes (View Only)
+    Route::get('/stores', [\App\Http\Controllers\StoreController::class, 'index']);
+    Route::get('/stores/{id}', [\App\Http\Controllers\StoreController::class, 'show']);
+
+    // Protected Routes (Admin)
+    Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+        Route::post('/admin/users/{user}/promote', [\App\Http\Controllers\AdminController::class, 'promote']);
+
+        // Banner Management
+        Route::post('/banners', [\App\Http\Controllers\BannerController::class, 'store']);
+        Route::post('/banners/{id}', [\App\Http\Controllers\BannerController::class, 'update']);
+        Route::delete('/banners/{id}', [\App\Http\Controllers\BannerController::class, 'destroy']);
+
+        // Store Management
+        Route::post('/stores', [\App\Http\Controllers\StoreController::class, 'store']);
+        Route::post('/stores/{id}', [\App\Http\Controllers\StoreController::class, 'update']);
+        Route::delete('/stores/{id}', [\App\Http\Controllers\StoreController::class, 'destroy']);
+
+        // Order Management (Admin)
+        Route::get('/admin/orders', [\App\Http\Controllers\AdminOrderController::class, 'index']);
+        Route::post('/admin/orders/{id}', [\App\Http\Controllers\AdminOrderController::class, 'update']);
+        Route::delete('/admin/orders/{id}', [\App\Http\Controllers\AdminOrderController::class, 'destroy']);
+
+        // Coupon Management (Admin)
+        Route::get('/admin/coupons', [\App\Http\Controllers\CouponController::class, 'index']);
+        Route::post('/admin/coupons', [\App\Http\Controllers\CouponController::class, 'store']);
+        Route::delete('/admin/coupons/{id}', [\App\Http\Controllers\CouponController::class, 'destroy']);
+    });
+
+    // Coupon Check (User)
+    Route::post('/check-coupon', [\App\Http\Controllers\CouponController::class, 'check']);
 });

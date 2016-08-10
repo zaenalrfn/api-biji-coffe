@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
@@ -23,11 +24,14 @@ class AuthController extends Controller
             'password' => Hash::make($validatedData['password']),
         ]);
 
+        $user->assignRole('user');
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
+            'user' => array_merge($user->toArray(), ['roles' => $user->getRoleNames()]),
         ]);
     }
 
@@ -46,6 +50,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
+            'user' => array_merge($user->toArray(), ['roles' => $user->getRoleNames()]),
         ]);
     }
 
@@ -65,16 +70,34 @@ class AuthController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'image' => 'nullable|image|max:2048', // Validate image
         ]);
 
-        $user->update([
-            'name' => $validatedData['name'],
-            'email' => $validatedData['email'],
-        ]);
+        $user->name = $validatedData['name'];
+        $user->email = $validatedData['email'];
+
+        // Handle Image Upload
+        if ($request->hasFile('image')) {
+            // Delete old photo if exists and isn't a URL/external
+            if ($user->profile_photo_path && Storage::disk('public')->exists($user->profile_photo_path)) {
+                Storage::disk('public')->delete($user->profile_photo_path);
+            }
+
+            $path = $request->file('image')->store('profile-photos', 'public');
+            $user->profile_photo_path = $path;
+        }
+
+        $user->save();
+
+        $user->sendNotification(
+            'Profile Updated',
+            'Your profile information has been updated successfully.',
+            'account'
+        );
 
         return response()->json([
             'message' => 'Profile updated successfully',
-            'user' => $user,
+            'user' => array_merge($user->toArray(), ['roles' => $user->getRoleNames()]),
         ]);
     }
 }

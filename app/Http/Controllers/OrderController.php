@@ -36,7 +36,6 @@ class OrderController extends Controller
             'shipping_address.state' => 'required|string',
             'shipping_address.country' => 'required|string',
             'shipping_address.zip_code' => 'required|string',
-            // 'payment_method' => 'required|string|in:Credit Card,Bank Transfer,Virtual Account', // No longer strictly needed as Midtrans handles method
         ]);
 
         $user = Auth::user();
@@ -54,13 +53,16 @@ class OrderController extends Controller
         try {
             DB::beginTransaction();
 
+            $transactionId = 'ORDER-' . time() . '-' . $user->id;
+
             $order = Order::create([
                 'user_id' => $user->id,
-                'payment_method' => 'Midtrans', // Defaulting to Midtrans
+                'payment_method' => 'Midtrans',
                 'shipping_address' => $request->shipping_address,
                 'total_price' => $totalPrice,
                 'status' => 'pending',
                 'payment_status' => 'unpaid',
+                'transaction_id' => $transactionId,
             ]);
 
             foreach ($cartItems as $item) {
@@ -74,19 +76,23 @@ class OrderController extends Controller
             }
 
             // --- Midtrans Integration ---
-            // Set your Merchant Server Key
             \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
-            // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
             \Midtrans\Config::$isProduction = (bool) env('MIDTRANS_IS_PRODUCTION', false);
-            // Set sanitization on (default)
             \Midtrans\Config::$isSanitized = true;
             // Set 3DS transaction for credit card to true
             \Midtrans\Config::$is3ds = true;
 
+            // Override usage of SSL for local development (fixes CURL Error: SSL certificate problem)
+            \Midtrans\Config::$curlOptions = [
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => 0,
+                CURLOPT_HTTPHEADER => [], // Fix for Undefined array key 10023 likely accessed by library
+            ];
+
             $params = [
                 'transaction_details' => [
-                    'order_id' => $order->id . '-' . time(), // Unique ID
-                    'gross_amount' => (int) $order->total_price,
+                    'order_id' => $transactionId,
+                    'gross_amount' => (int) $totalPrice,
                 ],
                 'customer_details' => [
                     'first_name' => $user->name,
@@ -102,12 +108,19 @@ class OrderController extends Controller
                 })->toArray(),
             ];
 
-            // Get Snap Token
             $snapToken = \Midtrans\Snap::getSnapToken($params);
-            // Get Payment URL (optional, if using redirect directly)
-            // $paymentUrl = \Midtrans\Snap::createTransaction($params)->redirect_url;
+
+            $order->update(['snap_token' => $snapToken]);
 
             // --- End Midtrans Integration ---
+
+            // Send Notification
+            $user->sendNotification(
+                'Order Successful',
+                'Your order #' . $order->id . ' has been successfully placed. Please complete payment.',
+                'order',
+                $order->id
+            );
 
             // Clear cart
             CartItem::where('user_id', $user->id)->delete();
@@ -117,7 +130,6 @@ class OrderController extends Controller
             return response()->json([
                 'order' => $order->load('items.product'),
                 'snap_token' => $snapToken,
-                // 'payment_url' => $paymentUrl ?? null,
             ], 201);
 
         } catch (\Exception $e) {

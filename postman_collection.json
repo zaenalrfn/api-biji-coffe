@@ -1,10 +1,15 @@
 {
     "info": {
         "name": "Biji Coffee API",
+<<<<<<< HEAD
+=======
+        "description": "Comprehensive API collection for Biji Coffee. \nAdmin endpoints are marked. \nMost endpoints require Bearer Token (set automatically after Login/Register).",
+>>>>>>> main
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
     "item": [
         {
+<<<<<<< HEAD
             "name": "",
             "item": [
                 {
@@ -36,6 +41,27 @@
             "item": [
                 {
                     "name": "Login",
+=======
+            "name": "00. Auth & Public",
+            "item": [
+                {
+                    "name": "Login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var jsonData = pm.response.json();",
+                                    "if (jsonData.access_token) {",
+                                    "    pm.collectionVariables.set(\"token\", jsonData.access_token);",
+                                    "    console.log(\"Token updated successfully\");",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+>>>>>>> main
                     "request": {
                         "method": "POST",
                         "header": [
@@ -56,7 +82,11 @@
                         },
                         "body": {
                             "mode": "raw",
+<<<<<<< HEAD
                             "raw": "{\n    \"email\": \"john@locatrack.com\",\n    \"password\": \"password123\"\n}",
+=======
+                            "raw": "{\n    \"email\": \"admin@locatrack.com\",\n    \"password\": \"password123\"\n}",
+>>>>>>> main
                             "options": {
                                 "raw": {
                                     "language": "json"
@@ -67,6 +97,23 @@
                 },
                 {
                     "name": "Register",
+<<<<<<< HEAD
+=======
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "var jsonData = pm.response.json();",
+                                    "if (jsonData.access_token) {",
+                                    "    pm.collectionVariables.set(\"token\", jsonData.access_token);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+>>>>>>> main
                     "request": {
                         "method": "POST",
                         "header": [
@@ -87,7 +134,11 @@
                         },
                         "body": {
                             "mode": "raw",
+<<<<<<< HEAD
                             "raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"john@locatrack.com\",\n    \"password\": \"password123\"\n}",
+=======
+                            "raw": "{\n    \"name\": \"New User\",\n    \"email\": \"user@example.com\",\n    \"password\": \"password123\"\n}",
+>>>>>>> main
                             "options": {
                                 "raw": {
                                     "language": "json"
@@ -115,10 +166,170 @@
                                 "api",
                                 "logout"
                             ]
+<<<<<<< HEAD
                         },
                         "body": {
                             "mode": "raw",
                             "raw": "{\n    \n}",
+=======
+                        }
+                    }
+                },
+                {
+                    "name": "Forgot Password",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/forgot-password",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "forgot-password"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"email\": \"admin@locatrack.com\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Reset Password",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/reset-password",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "reset-password"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"email\": \"admin@locatrack.com\",\n    \"password\": \"newpassword123\",\n    \"password_confirmation\": \"newpassword123\",\n    \"token\": \"123456\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Get Current User",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/user",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "user"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Profile",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "_method",
+                                    "value": "PUT",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "name",
+                                    "value": "Updated Name",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "email",
+                                    "value": "admin@locatrack.com",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "image",
+                                    "type": "file",
+                                    "src": []
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/user",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "user"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Profile",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/user",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "user"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Updated Name\",\n    \"email\": \"updated@example.com\"\n}",
+>>>>>>> main
                             "options": {
                                 "raw": {
                                     "language": "json"
@@ -130,10 +341,311 @@
             ]
         },
         {
+<<<<<<< HEAD
             "name": "Cart",
             "item": [
                 {
                     "name": "cart.store",
+=======
+            "name": "01. Products (Admin Managed)",
+            "item": [
+                {
+                    "name": "List Products",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/products",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "products"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Product (Admin Only)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/products",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "products"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"category_id\": 1,\n    \"title\": \"Cappuccino\",\n    \"subtitle\": \"Warm and frothy\",\n    \"price\": 25000,\n    \"image_url\": \"https://png.pngtree.com/thumb_back/fw800/background/20220609/pngtree-aesthetic-milkbased-coffee-with-latte-art-on-wooden-surface-photo-image_31284248.jpg\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Show Product",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/products/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "products",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Product (Admin Only)",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/products/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "products",
+                                "1"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"title\": \"Updated Cappuccino\",\n    \"price\": 26000,\n    \"image_url\": \"https://png.pngtree.com/thumb_back/fw800/background/20220609/pngtree-aesthetic-milkbased-coffee-with-latte-art-on-wooden-surface-photo-image_31284248.jpg\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Product (Admin Only)",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/products/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "products",
+                                "1"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "02. Categories",
+            "item": [
+                {
+                    "name": "List Categories",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/categories",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "categories"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Category",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/categories",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "categories"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Coffee\",\n    \"icon_name\": \"local_cafe\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Show Category",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/categories/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "categories",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Category",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/categories/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "categories",
+                                "1"
+                            ]
+                        },
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Updated Coffee\",\n    \"icon_name\": \"local_cafe\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Category",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/categories/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "categories",
+                                "1"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "03. Shopping (User)",
+            "item": [
+                {
+                    "name": "Cart - List",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/cart",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "cart"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Cart - Add Item",
+>>>>>>> main
                     "request": {
                         "method": "POST",
                         "header": [
@@ -164,7 +676,11 @@
                     }
                 },
                 {
+<<<<<<< HEAD
                     "name": "cart.index",
+=======
+                    "name": "Cart - Show Item",
+>>>>>>> main
                     "request": {
                         "method": "GET",
                         "header": [
@@ -174,19 +690,32 @@
                             }
                         ],
                         "url": {
+<<<<<<< HEAD
                             "raw": "{{base_url}}/api/cart",
+=======
+                            "raw": "{{base_url}}/api/cart/1",
+>>>>>>> main
                             "host": [
                                 "{{base_url}}"
                             ],
                             "path": [
                                 "api",
+<<<<<<< HEAD
                                 "cart"
+=======
+                                "cart",
+                                "1"
+>>>>>>> main
                             ]
                         }
                     }
                 },
                 {
+<<<<<<< HEAD
                     "name": "cart.update",
+=======
+                    "name": "Cart - Update Item",
+>>>>>>> main
                     "request": {
                         "method": "PUT",
                         "header": [
@@ -196,14 +725,22 @@
                             }
                         ],
                         "url": {
+<<<<<<< HEAD
                             "raw": "{{base_url}}/api/cart/{cart}",
+=======
+                            "raw": "{{base_url}}/api/cart/1",
+>>>>>>> main
                             "host": [
                                 "{{base_url}}"
                             ],
                             "path": [
                                 "api",
                                 "cart",
+<<<<<<< HEAD
                                 "{cart}"
+=======
+                                "1"
+>>>>>>> main
                             ]
                         },
                         "body": {
@@ -218,7 +755,11 @@
                     }
                 },
                 {
+<<<<<<< HEAD
                     "name": "cart.destroy",
+=======
+                    "name": "Cart - Remove Item",
+>>>>>>> main
                     "request": {
                         "method": "DELETE",
                         "header": [
@@ -228,20 +769,32 @@
                             }
                         ],
                         "url": {
+<<<<<<< HEAD
                             "raw": "{{base_url}}/api/cart/{cart}",
+=======
+                            "raw": "{{base_url}}/api/cart/1",
+>>>>>>> main
                             "host": [
                                 "{{base_url}}"
                             ],
                             "path": [
                                 "api",
                                 "cart",
+<<<<<<< HEAD
                                 "{cart}"
+=======
+                                "1"
+>>>>>>> main
                             ]
                         }
                     }
                 },
                 {
+<<<<<<< HEAD
                     "name": "cart.show",
+=======
+                    "name": "Orders - List",
+>>>>>>> main
                     "request": {
                         "method": "GET",
                         "header": [
@@ -251,12 +804,17 @@
                             }
                         ],
                         "url": {
+<<<<<<< HEAD
                             "raw": "{{base_url}}/api/cart/{cart}",
+=======
+                            "raw": "{{base_url}}/api/orders",
+>>>>>>> main
                             "host": [
                                 "{{base_url}}"
                             ],
                             "path": [
                                 "api",
+<<<<<<< HEAD
                                 "cart",
                                 "{cart}"
                             ]
@@ -270,6 +828,15 @@
             "item": [
                 {
                     "name": "categories.store",
+=======
+                                "orders"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Orders - Create",
+>>>>>>> main
                     "request": {
                         "method": "POST",
                         "header": [
@@ -279,18 +846,30 @@
                             }
                         ],
                         "url": {
+<<<<<<< HEAD
                             "raw": "{{base_url}}/api/categories",
+=======
+                            "raw": "{{base_url}}/api/orders",
+>>>>>>> main
                             "host": [
                                 "{{base_url}}"
                             ],
                             "path": [
                                 "api",
+<<<<<<< HEAD
                                 "categories"
+=======
+                                "orders"
+>>>>>>> main
                             ]
                         },
                         "body": {
                             "mode": "raw",
+<<<<<<< HEAD
                             "raw": "{\n    \"name\": \"Coffee\"\n}",
+=======
+                            "raw": "{\n    \"shipping_address\": {\n        \"recipient_name\": \"John Doe\",\n        \"address_line\": \"123 Coffee St\",\n        \"city\": \"Jakarta\",\n        \"state\": \"DKI Jakarta\",\n        \"country\": \"Indonesia\",\n        \"zip_code\": \"12345\"\n    }\n}",
+>>>>>>> main
                             "options": {
                                 "raw": {
                                     "language": "json"
@@ -300,7 +879,11 @@
                     }
                 },
                 {
+<<<<<<< HEAD
                     "name": "categories.index",
+=======
+                    "name": "Orders - Show",
+>>>>>>> main
                     "request": {
                         "method": "GET",
                         "header": [
@@ -310,21 +893,36 @@
                             }
                         ],
                         "url": {
+<<<<<<< HEAD
                             "raw": "{{base_url}}/api/categories",
+=======
+                            "raw": "{{base_url}}/api/orders/1",
+>>>>>>> main
                             "host": [
                                 "{{base_url}}"
                             ],
                             "path": [
                                 "api",
+<<<<<<< HEAD
                                 "categories"
+=======
+                                "orders",
+                                "1"
+>>>>>>> main
                             ]
                         }
                     }
                 },
                 {
+<<<<<<< HEAD
                     "name": "categories.update",
                     "request": {
                         "method": "PUT",
+=======
+                    "name": "Wishlist - List",
+                    "request": {
+                        "method": "GET",
+>>>>>>> main
                         "header": [
                             {
                                 "key": "Accept",
@@ -332,19 +930,53 @@
                             }
                         ],
                         "url": {
+<<<<<<< HEAD
                             "raw": "{{base_url}}/api/categories/{category}",
+=======
+                            "raw": "{{base_url}}/api/wishlist",
+>>>>>>> main
                             "host": [
                                 "{{base_url}}"
                             ],
                             "path": [
                                 "api",
+<<<<<<< HEAD
                                 "categories",
                                 "{category}"
+=======
+                                "wishlist"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Wishlist - Add",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/wishlist",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "wishlist"
+>>>>>>> main
                             ]
                         },
                         "body": {
                             "mode": "raw",
+<<<<<<< HEAD
                             "raw": "{\n    \"name\": \"Updated Coffee\"\n}",
+=======
+                            "raw": "{\n    \"product_id\": 1\n}",
+>>>>>>> main
                             "options": {
                                 "raw": {
                                     "language": "json"
@@ -354,7 +986,11 @@
                     }
                 },
                 {
+<<<<<<< HEAD
                     "name": "categories.destroy",
+=======
+                    "name": "Wishlist - Remove",
+>>>>>>> main
                     "request": {
                         "method": "DELETE",
                         "header": [
@@ -364,20 +1000,63 @@
                             }
                         ],
                         "url": {
+<<<<<<< HEAD
                             "raw": "{{base_url}}/api/categories/{category}",
+=======
+                            "raw": "{{base_url}}/api/wishlist/1",
+>>>>>>> main
                             "host": [
                                 "{{base_url}}"
                             ],
                             "path": [
                                 "api",
+<<<<<<< HEAD
                                 "categories",
                                 "{category}"
+=======
+                                "wishlist",
+                                "1"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "04. System & Admin",
+            "item": [
+                {
+                    "name": "Promote User to Admin",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/users/10/promote",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "users",
+                                "10",
+                                "promote"
+>>>>>>> main
                             ]
                         }
                     }
                 },
                 {
+<<<<<<< HEAD
                     "name": "categories.show",
+=======
+                    "name": "Notifications - List",
+>>>>>>> main
                     "request": {
                         "method": "GET",
                         "header": [
@@ -387,12 +1066,17 @@
                             }
                         ],
                         "url": {
+<<<<<<< HEAD
                             "raw": "{{base_url}}/api/categories/{category}",
+=======
+                            "raw": "{{base_url}}/api/notifications",
+>>>>>>> main
                             "host": [
                                 "{{base_url}}"
                             ],
                             "path": [
                                 "api",
+<<<<<<< HEAD
                                 "categories",
                                 "{category}"
                             ]
@@ -406,6 +1090,245 @@
             "item": [
                 {
                     "name": "api/midtrans/callback",
+=======
+                                "notifications"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Notifications - Mark Read",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/notifications/1/read",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "notifications",
+                                "1",
+                                "read"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Admin - List Orders",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/orders",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "orders"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Admin - Update Order",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"status\": \"completed\",\n    \"payment_status\": \"paid\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/orders/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "orders",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Admin - Delete Order",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/orders/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "orders",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Admin - List Orders",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/orders",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "orders"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Admin - Update Order",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"status\": \"completed\",\n    \"payment_status\": \"paid\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/orders/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "orders",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Admin - Delete Order",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/orders/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "orders",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Notifications - Mark All Read",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/notifications/read-all",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "notifications",
+                                "read-all"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Notifications - Delete All",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/notifications/delete-all",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "notifications",
+                                "delete-all"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Midtrans Callback (System)",
+>>>>>>> main
                     "request": {
                         "method": "POST",
                         "header": [
@@ -439,6 +1362,7 @@
             ]
         },
         {
+<<<<<<< HEAD
             "name": "Orders",
             "item": [
                 {
@@ -474,6 +1398,12 @@
                 },
                 {
                     "name": "orders.index",
+=======
+            "name": "05. Banners (Promotion & Public)",
+            "item": [
+                {
+                    "name": "List Banners",
+>>>>>>> main
                     "request": {
                         "method": "GET",
                         "header": [
@@ -483,21 +1413,72 @@
                             }
                         ],
                         "url": {
+<<<<<<< HEAD
                             "raw": "{{base_url}}/api/orders",
+=======
+                            "raw": "{{base_url}}/api/banners",
+>>>>>>> main
                             "host": [
                                 "{{base_url}}"
                             ],
                             "path": [
                                 "api",
+<<<<<<< HEAD
                                 "orders"
+=======
+                                "banners"
+>>>>>>> main
                             ]
                         }
                     }
                 },
                 {
+<<<<<<< HEAD
                     "name": "orders.update",
                     "request": {
                         "method": "PUT",
+=======
+                    "name": "Create Banner",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "name",
+                                    "value": "New Promo Banner",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "image",
+                                    "type": "file",
+                                    "src": []
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/banners",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "banners"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Show Banner",
+                    "request": {
+                        "method": "GET",
+>>>>>>> main
                         "header": [
                             {
                                 "key": "Accept",
@@ -505,12 +1486,17 @@
                             }
                         ],
                         "url": {
+<<<<<<< HEAD
                             "raw": "{{base_url}}/api/orders/{order}",
+=======
+                            "raw": "{{base_url}}/api/banners/1",
+>>>>>>> main
                             "host": [
                                 "{{base_url}}"
                             ],
                             "path": [
                                 "api",
+<<<<<<< HEAD
                                 "orders",
                                 "{order}"
                             ]
@@ -523,11 +1509,58 @@
                                     "language": "json"
                                 }
                             }
+=======
+                                "banners",
+                                "1"
+                            ]
+>>>>>>> main
                         }
                     }
                 },
                 {
+<<<<<<< HEAD
                     "name": "orders.destroy",
+=======
+                    "name": "Update Banner (Admin Only)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "name",
+                                    "value": "Updated Promo Banner",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "image",
+                                    "type": "file",
+                                    "src": []
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/banners/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "banners",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Banner (Admin Only)",
+>>>>>>> main
                     "request": {
                         "method": "DELETE",
                         "header": [
@@ -537,12 +1570,17 @@
                             }
                         ],
                         "url": {
+<<<<<<< HEAD
                             "raw": "{{base_url}}/api/orders/{order}",
+=======
+                            "raw": "{{base_url}}/api/banners/1",
+>>>>>>> main
                             "host": [
                                 "{{base_url}}"
                             ],
                             "path": [
                                 "api",
+<<<<<<< HEAD
                                 "orders",
                                 "{order}"
                             ]
@@ -551,6 +1589,21 @@
                 },
                 {
                     "name": "orders.show",
+=======
+                                "banners",
+                                "1"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "06. Store Locations",
+            "item": [
+                {
+                    "name": "List Stores",
+>>>>>>> main
                     "request": {
                         "method": "GET",
                         "header": [
@@ -560,12 +1613,17 @@
                             }
                         ],
                         "url": {
+<<<<<<< HEAD
                             "raw": "{{base_url}}/api/orders/{order}",
+=======
+                            "raw": "{{base_url}}/api/stores",
+>>>>>>> main
                             "host": [
                                 "{{base_url}}"
                             ],
                             "path": [
                                 "api",
+<<<<<<< HEAD
                                 "orders",
                                 "{order}"
                             ]
@@ -579,6 +1637,15 @@
             "item": [
                 {
                     "name": "products.store",
+=======
+                                "stores"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Store (Admin)",
+>>>>>>> main
                     "request": {
                         "method": "POST",
                         "header": [
@@ -587,13 +1654,59 @@
                                 "value": "application/json"
                             }
                         ],
+<<<<<<< HEAD
                         "url": {
                             "raw": "{{base_url}}/api/products",
+=======
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "name",
+                                    "value": "Medan Plaza Store",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "address",
+                                    "value": "Jl. Iskandar Muda No. 123, Medan",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "latitude",
+                                    "value": "3.5852",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "longitude",
+                                    "value": "98.6756",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "open_time",
+                                    "value": "09:00 AM",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "close_time",
+                                    "value": "10:00 PM",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "image",
+                                    "type": "file",
+                                    "src": []
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/stores",
+>>>>>>> main
                             "host": [
                                 "{{base_url}}"
                             ],
                             "path": [
                                 "api",
+<<<<<<< HEAD
                                 "products"
                             ]
                         },
@@ -605,11 +1718,19 @@
                                     "language": "json"
                                 }
                             }
+=======
+                                "stores"
+                            ]
+>>>>>>> main
                         }
                     }
                 },
                 {
+<<<<<<< HEAD
                     "name": "products.index",
+=======
+                    "name": "Show Store",
+>>>>>>> main
                     "request": {
                         "method": "GET",
                         "header": [
@@ -619,34 +1740,75 @@
                             }
                         ],
                         "url": {
+<<<<<<< HEAD
                             "raw": "{{base_url}}/api/products",
+=======
+                            "raw": "{{base_url}}/api/stores/1",
+>>>>>>> main
                             "host": [
                                 "{{base_url}}"
                             ],
                             "path": [
                                 "api",
+<<<<<<< HEAD
                                 "products"
+=======
+                                "stores",
+                                "1"
+>>>>>>> main
                             ]
                         }
                     }
                 },
                 {
+<<<<<<< HEAD
                     "name": "products.update",
                     "request": {
                         "method": "PUT",
+=======
+                    "name": "Update Store (Admin)",
+                    "request": {
+                        "method": "POST",
+>>>>>>> main
                         "header": [
                             {
                                 "key": "Accept",
                                 "value": "application/json"
                             }
                         ],
+<<<<<<< HEAD
                         "url": {
                             "raw": "{{base_url}}/api/products/{product}",
+=======
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "name",
+                                    "value": "Medan Center Point",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "open_time",
+                                    "value": "08:00 AM",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "image",
+                                    "type": "file",
+                                    "src": []
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/stores/1",
+>>>>>>> main
                             "host": [
                                 "{{base_url}}"
                             ],
                             "path": [
                                 "api",
+<<<<<<< HEAD
                                 "products",
                                 "{product}"
                             ]
@@ -659,11 +1821,20 @@
                                     "language": "json"
                                 }
                             }
+=======
+                                "stores",
+                                "1"
+                            ]
+>>>>>>> main
                         }
                     }
                 },
                 {
+<<<<<<< HEAD
                     "name": "products.destroy",
+=======
+                    "name": "Delete Store (Admin)",
+>>>>>>> main
                     "request": {
                         "method": "DELETE",
                         "header": [
@@ -673,12 +1844,17 @@
                             }
                         ],
                         "url": {
+<<<<<<< HEAD
                             "raw": "{{base_url}}/api/products/{product}",
+=======
+                            "raw": "{{base_url}}/api/stores/1",
+>>>>>>> main
                             "host": [
                                 "{{base_url}}"
                             ],
                             "path": [
                                 "api",
+<<<<<<< HEAD
                                 "products",
                                 "{product}"
                             ]
@@ -704,6 +1880,10 @@
                                 "api",
                                 "products",
                                 "{product}"
+=======
+                                "stores",
+                                "1"
+>>>>>>> main
                             ]
                         }
                     }
@@ -711,6 +1891,7 @@
             ]
         },
         {
+<<<<<<< HEAD
             "name": "User",
             "item": [
                 {
@@ -746,6 +1927,12 @@
                 },
                 {
                     "name": "api/user",
+=======
+            "name": "07. Coupons",
+            "item": [
+                {
+                    "name": "Admin - List Coupons",
+>>>>>>> main
                     "request": {
                         "method": "GET",
                         "header": [
@@ -755,12 +1942,17 @@
                             }
                         ],
                         "url": {
+<<<<<<< HEAD
                             "raw": "{{base_url}}/api/user",
+=======
+                            "raw": "{{base_url}}/api/admin/coupons",
+>>>>>>> main
                             "host": [
                                 "{{base_url}}"
                             ],
                             "path": [
                                 "api",
+<<<<<<< HEAD
                                 "user"
                             ]
                         }
@@ -789,12 +1981,20 @@
                             "path": [
                                 "api",
                                 "wishlist"
+=======
+                                "admin",
+                                "coupons"
+>>>>>>> main
                             ]
                         }
                     }
                 },
                 {
+<<<<<<< HEAD
                     "name": "api/wishlist",
+=======
+                    "name": "Admin - Create Coupon",
+>>>>>>> main
                     "request": {
                         "method": "POST",
                         "header": [
@@ -803,6 +2003,7 @@
                                 "value": "application/json"
                             }
                         ],
+<<<<<<< HEAD
                         "url": {
                             "raw": "{{base_url}}/api/wishlist",
                             "host": [
@@ -816,16 +2017,39 @@
                         "body": {
                             "mode": "raw",
                             "raw": "{\n    \"product_id\": 1\n}",
+=======
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"code\": \"WELCOME50\",\n    \"type\": \"percent\",\n    \"value\": 50,\n    \"min_purchase\": 20000,\n    \"expires_at\": \"2025-12-31\",\n    \"is_active\": true\n}",
+>>>>>>> main
                             "options": {
                                 "raw": {
                                     "language": "json"
                                 }
                             }
+<<<<<<< HEAD
+=======
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/admin/coupons",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "admin",
+                                "coupons"
+                            ]
+>>>>>>> main
                         }
                     }
                 },
                 {
+<<<<<<< HEAD
                     "name": "api/wishlist/{product_id}",
+=======
+                    "name": "Admin - Delete Coupon",
+>>>>>>> main
                     "request": {
                         "method": "DELETE",
                         "header": [
@@ -835,12 +2059,17 @@
                             }
                         ],
                         "url": {
+<<<<<<< HEAD
                             "raw": "{{base_url}}/api/wishlist/{product_id}",
+=======
+                            "raw": "{{base_url}}/api/admin/coupons/1",
+>>>>>>> main
                             "host": [
                                 "{{base_url}}"
                             ],
                             "path": [
                                 "api",
+<<<<<<< HEAD
                                 "wishlist",
                                 "{product_id}"
                             ]
@@ -856,12 +2085,26 @@
                     "name": "payment-test",
                     "request": {
                         "method": "GET",
+=======
+                                "admin",
+                                "coupons",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "User - Check Coupon",
+                    "request": {
+                        "method": "POST",
+>>>>>>> main
                         "header": [
                             {
                                 "key": "Accept",
                                 "value": "application/json"
                             }
                         ],
+<<<<<<< HEAD
                         "url": {
                             "raw": "{{base_url}}/payment-test",
                             "host": [
@@ -890,10 +2133,24 @@
                         ],
                         "url": {
                             "raw": "{{base_url}}/sanctum/csrf-cookie",
+=======
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"code\": \"WELCOME50\",\n    \"total_amount\": 50000\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/check-coupon",
+>>>>>>> main
                             "host": [
                                 "{{base_url}}"
                             ],
                             "path": [
+<<<<<<< HEAD
                                 "sanctum",
                                 "csrf-cookie"
                             ]
@@ -949,6 +2206,10 @@
                             ],
                             "path": [
                                 "up"
+=======
+                                "api",
+                                "check-coupon"
+>>>>>>> main
                             ]
                         }
                     }
@@ -956,10 +2217,32 @@
             ]
         }
     ],
+<<<<<<< HEAD
     "variable": [
         {
             "key": "base_url",
             "value": "http://localhost:8001",
+=======
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{token}}",
+                "type": "string"
+            }
+        ]
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://192.168.100.1:8000",
+            "type": "string"
+        },
+        {
+            "key": "token",
+            "value": "",
+>>>>>>> main
             "type": "string"
         }
     ]

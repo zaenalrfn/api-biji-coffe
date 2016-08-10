@@ -17,6 +17,7 @@ class Order extends Model
         'status',
         'payment_status',
         'transaction_id',
+        'snap_token',
     ];
 
     protected $casts = [

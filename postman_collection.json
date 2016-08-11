@@ -55,6 +55,29 @@
                     }
                 },
                 {
+                    "name": "Guest Login",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/login/guest",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "login",
+                                "guest"
+                            ]
+                        }
+                    }
+                },
+                {
                     "name": "Register",
                     "event": [
                         {
@@ -1594,6 +1617,81 @@
                             "path": [
                                 "api",
                                 "check-coupon"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "08. OAuth",
+            "item": [
+                {
+                    "name": "Google Login",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/oauth/google",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "oauth",
+                                "google"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Facebook Login",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/oauth/facebook",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "oauth",
+                                "facebook"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Google Callback",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/oauth/google/callback",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "oauth",
+                                "google",
+                                "callback"
                             ]
                         }
                     }

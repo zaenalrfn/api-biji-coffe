@@ -8,6 +8,13 @@ Route::middleware(['throttle:write'])->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
 
+    // Dynamic Oauth (Google, Facebook, etc.)
+    Route::get('oauth/{provider}', [\App\Http\Controllers\OauthController::class, 'redirectToProvider'])->where('provider', 'google|facebook')->name('oauth.redirect');
+    Route::get('oauth/{provider}/callback', [\App\Http\Controllers\OauthController::class, 'handleProviderCallback'])->where('provider', 'google|facebook')->name('oauth.callback');
+
+    // Guest Login
+    Route::post('/login/guest', [AuthController::class, 'loginGuest']);
+
     // Public Midtrans Webhook
     Route::post('/midtrans/callback', [\App\Http\Controllers\MidtransCallbackController::class, 'handle']);
 

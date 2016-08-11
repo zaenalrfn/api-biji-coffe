@@ -2,65 +2,112 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+
 use Laravel\Socialite\Facades\Socialite;
+use Exception;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 
 class OauthController extends Controller
 {
-    public function redirectToProvider($provider)
+    public function redirectToProvider()
     {
-        return Socialite::driver($provider)->stateless()->redirect();
+        /** @var \Laravel\Socialite\Two\AbstractProvider $driver */
+        $driver = Socialite::driver('google');
+
+        // Stateless is required for API stateless authentication
+        return $driver->stateless()->redirect();
     }
 
-    public function handleProviderCallback($provider)
+    // public function handleProviderCallback()
+    // {
+    //     try {
+    //         /** @var \Laravel\Socialite\Two\AbstractProvider $driver */
+    //         $driver = Socialite::driver('google');
+
+    //         // Use stateless() here as well
+    //         $user = $driver->stateless()->user();
+
+    //         $finduser = User::where('gauth_id', $user->id)->first();
+
+    //         if ($finduser) {
+    //             // If user exists, create token
+    //             $token = $finduser->createToken('auth_token')->plainTextToken;
+
+    //             return response()->json([
+    //                 'message' => 'Login successful',
+    //                 'access_token' => $token,
+    //                 'token_type' => 'Bearer',
+    //                 'user' => $finduser
+    //             ], 200);
+
+    //         } else {
+    //             // If user does not exist, create new user
+    //             $newUser = User::create([
+    //                 'name' => $user->name,
+    //                 'email' => $user->email,
+    //                 'gauth_id' => $user->id,
+    //                 'gauth_type' => 'google',
+    //                 // Random password for security since they log in via Google
+    //                 'password' => encrypt('admin@123')
+    //             ]);
+
+    //             // Assign default role 'user'
+    //             $newUser->assignRole('user');
+
+    //             $token = $newUser->createToken('auth_token')->plainTextToken;
+
+    //             return response()->json([
+    //                 'message' => 'User created and logged in successfully',
+    //                 'access_token' => $token,
+    //                 'token_type' => 'Bearer',
+    //                 'user' => $newUser
+    //             ], 201);
+    //         }
+
+    //     } catch (Exception $e) {
+    //         return response()->json([
+    //             'message' => 'Authentication failed',
+    //             'error' => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
+    public function handleProviderCallback()
     {
         try {
-            $driver = Socialite::driver($provider)->stateless();
-            $driver->setHttpClient(new \GuzzleHttp\Client(['verify' => false])); // Bypass SSL for Localhost/Windows
-            $socialUser = $driver->user();
-
-            // Determine appropriate ID column
-            $idColumn = $provider . '_id'; // google_id or facebook_id
-
-            // Find user by Email
-            $user = User::where('email', $socialUser->getEmail())->first();
-
-            if ($user) {
-                // If user exists, update Provider ID if missing
-                if (!$user->$idColumn) {
-                    $user->update([$idColumn => $socialUser->getId()]);
-                }
-            } else {
-                // Create new user
-                $user = User::create([
-                    'name' => $socialUser->getName(),
-                    'email' => $socialUser->getEmail(),
-                    'password' => bcrypt(Str::random(16)),
-                    $idColumn => $socialUser->getId(),
-                    'email_verified_at' => now(),
+            $driver = Socialite::driver('google');
+            $user = $driver->stateless()->user();
+            $finduser = User::where('gauth_id', $user->id)->first();
+            // Create or Get User logic (Simplified for brevity, keep your existing creation logic)
+            if (!$finduser) {
+                $finduser = User::create([
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'gauth_id' => $user->id,
+                    'gauth_type' => 'google',
+                    'password' => encrypt('admin@123')
                 ]);
+                $finduser->assignRole('user');
             }
-
-            // Assign default role if using Spatie
-            if ($user->roles->isEmpty()) {
-                $user->assignRole('user');
-            }
-
             // Create Token
-            $token = $user->createToken('auth_token')->plainTextToken;
-
-            return response()->json([
-                'message' => 'Login success',
-                'access_token' => $token,
-                'token_type' => 'Bearer',
-                'user' => $user
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Login failed: ' . $e->getMessage()], 500);
+            $token = $finduser->createToken('auth_token')->plainTextToken;
+            // CHECK REQUEST TYPE
+            // If it's an AJAX/API request (Mobile mostly), return JSON
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'message' => 'Login successful',
+                    'access_token' => $token,
+                    'token_type' => 'Bearer',
+                    'user' => $finduser
+                ], 200);
+            } else {
+                // WEB REDIRECT FLOW
+                // Redirect back to your Flutter Web App
+                // CHANGE 'http://localhost:XYZ' to your actual Flutter Web URL
+                $frontendUrl = "http://localhost:5555/?token=" . $token;
+                return redirect($frontendUrl);
+            }
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }

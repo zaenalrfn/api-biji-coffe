@@ -24,8 +24,8 @@ class User extends Authenticatable
         'email',
         'password',
         'profile_photo_path',
-        'google_id',
-        'facebook_id',
+        'gauth_id',
+        'gauth_type',
         'is_guest',
     ];
 

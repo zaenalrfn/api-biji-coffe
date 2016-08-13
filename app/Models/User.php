@@ -23,6 +23,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'profile_photo_path',
     ];
 
     /**
@@ -33,6 +34,10 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+    ];
+
+    protected $appends = [
+        'profile_photo_url',
     ];
 
     /**
@@ -47,6 +52,18 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function getProfilePhotoUrlAttribute()
+    {
+        if ($this->profile_photo_path) {
+            return asset('storage/' . $this->profile_photo_path);
+        }
+
+        // Default placeholder using UI Avatars
+        $name = urlencode($this->name);
+        return 'https://ui-avatars.com/api/?name=' . $name . '&color=7F9CF5&background=EBF4FF';
+    }
+
     public function wishlists()
     {
         return $this->hasMany(Wishlist::class);

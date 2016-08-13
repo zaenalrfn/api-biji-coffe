@@ -208,6 +208,53 @@
                 {
                     "name": "Update Profile",
                     "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "_method",
+                                    "value": "PUT",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "name",
+                                    "value": "Updated Name",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "email",
+                                    "value": "admin@locatrack.com",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "image",
+                                    "type": "file",
+                                    "src": []
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/user",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "user"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Profile",
+                    "request": {
                         "method": "PUT",
                         "header": [
                             {
@@ -421,7 +468,7 @@
                         },
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"name\": \"Coffee\"\n}",
+                            "raw": "{\n    \"name\": \"Coffee\",\n    \"icon_name\": \"local_cafe\"\n}",
                             "options": {
                                 "raw": {
                                     "language": "json"
@@ -476,7 +523,7 @@
                         },
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"name\": \"Updated Coffee\"\n}",
+                            "raw": "{\n    \"name\": \"Updated Coffee\",\n    \"icon_name\": \"local_cafe\"\n}",
                             "options": {
                                 "raw": {
                                     "language": "json"
@@ -1093,6 +1140,184 @@
                             "path": [
                                 "api",
                                 "banners",
+                                "1"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "06. Store Locations",
+            "item": [
+                {
+                    "name": "List Stores",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/stores",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "stores"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Store (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "name",
+                                    "value": "Medan Plaza Store",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "address",
+                                    "value": "Jl. Iskandar Muda No. 123, Medan",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "latitude",
+                                    "value": "3.5852",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "longitude",
+                                    "value": "98.6756",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "open_time",
+                                    "value": "09:00 AM",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "close_time",
+                                    "value": "10:00 PM",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "image",
+                                    "type": "file",
+                                    "src": []
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/stores",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "stores"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Show Store",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/stores/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "stores",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Store (Admin)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "formdata",
+                            "formdata": [
+                                {
+                                    "key": "name",
+                                    "value": "Medan Center Point",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "open_time",
+                                    "value": "08:00 AM",
+                                    "type": "text"
+                                },
+                                {
+                                    "key": "image",
+                                    "type": "file",
+                                    "src": []
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/stores/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "stores",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Store (Admin)",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Accept",
+                                "value": "application/json"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/stores/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "stores",
                                 "1"
                             ]
                         }

@@ -52,13 +52,22 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/notifications/read-all', [\App\Http\Controllers\NotificationController::class, 'markAllRead']);
     Route::delete('/notifications/delete-all', [\App\Http\Controllers\NotificationController::class, 'deleteAll']);
 
-    // Admin Only Routes
-    Route::middleware(['role:admin'])->group(function () {
+    // Public Store Routes (View Only)
+    Route::get('/stores', [\App\Http\Controllers\StoreController::class, 'index']);
+    Route::get('/stores/{id}', [\App\Http\Controllers\StoreController::class, 'show']);
+
+    // Protected Routes (Admin)
+    Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
         Route::post('/admin/users/{user}/promote', [\App\Http\Controllers\AdminController::class, 'promote']);
 
-        // Admin Banner Management
+        // Banner Management
         Route::post('/banners', [\App\Http\Controllers\BannerController::class, 'store']);
-        Route::post('/banners/{id}', [\App\Http\Controllers\BannerController::class, 'update']); // Use POST for file upload with method spoofing if needed, or stick to standard Laravel handling
+        Route::post('/banners/{id}', [\App\Http\Controllers\BannerController::class, 'update']);
         Route::delete('/banners/{id}', [\App\Http\Controllers\BannerController::class, 'destroy']);
+
+        // Store Management
+        Route::post('/stores', [\App\Http\Controllers\StoreController::class, 'store']);
+        Route::post('/stores/{id}', [\App\Http\Controllers\StoreController::class, 'update']);
+        Route::delete('/stores/{id}', [\App\Http\Controllers\StoreController::class, 'destroy']);
     });
 });

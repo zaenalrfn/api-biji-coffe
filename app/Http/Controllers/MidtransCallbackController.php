@@ -15,9 +15,8 @@ class MidtransCallbackController extends Controller
         $hashed = hash("sha512", $request->order_id . $request->status_code . $request->gross_amount . $serverKey);
 
         if ($hashed == $request->signature_key) {
-            // Order ID format could be "ID-Timestamp", so we split slightly differently or just find by ID if we stored it as string
-            $orderId = explode('-', $request->order_id)[0];
-            $order = Order::find($orderId);
+            // Find order by transaction_id (which is sent as order_id to Midtrans)
+            $order = Order::where('transaction_id', $request->order_id)->first();
 
             if (!$order) {
                 return response()->json(['message' => 'Order not found'], 404);

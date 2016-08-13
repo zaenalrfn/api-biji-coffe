@@ -69,5 +69,18 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/stores', [\App\Http\Controllers\StoreController::class, 'store']);
         Route::post('/stores/{id}', [\App\Http\Controllers\StoreController::class, 'update']);
         Route::delete('/stores/{id}', [\App\Http\Controllers\StoreController::class, 'destroy']);
+
+        // Order Management (Admin)
+        Route::get('/admin/orders', [\App\Http\Controllers\AdminOrderController::class, 'index']);
+        Route::post('/admin/orders/{id}', [\App\Http\Controllers\AdminOrderController::class, 'update']);
+        Route::delete('/admin/orders/{id}', [\App\Http\Controllers\AdminOrderController::class, 'destroy']);
+
+        // Coupon Management (Admin)
+        Route::get('/admin/coupons', [\App\Http\Controllers\CouponController::class, 'index']);
+        Route::post('/admin/coupons', [\App\Http\Controllers\CouponController::class, 'store']);
+        Route::delete('/admin/coupons/{id}', [\App\Http\Controllers\CouponController::class, 'destroy']);
     });
+
+    // Coupon Check (User)
+    Route::post('/check-coupon', [\App\Http\Controllers\CouponController::class, 'check']);
 });

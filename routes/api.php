@@ -10,6 +10,10 @@ Route::middleware(['throttle:write'])->group(function () {
 
     // Public Midtrans Webhook
     Route::post('/midtrans/callback', [\App\Http\Controllers\MidtransCallbackController::class, 'handle']);
+
+    // Password Reset
+    Route::post('/forgot-password', [\App\Http\Controllers\ResetPasswordController::class, 'forgotPassword']);
+    Route::post('/reset-password', [\App\Http\Controllers\ResetPasswordController::class, 'resetPassword']);
 });
 
 Route::middleware('auth:sanctum')->group(function () {

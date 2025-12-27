@@ -7,6 +7,9 @@ use App\Http\Controllers\AuthController;
 Route::middleware(['throttle:write'])->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
+
+    // Public Midtrans Webhook
+    Route::post('/midtrans/callback', [\App\Http\Controllers\MidtransCallbackController::class, 'handle']);
 });
 
 Route::middleware('auth:sanctum')->group(function () {

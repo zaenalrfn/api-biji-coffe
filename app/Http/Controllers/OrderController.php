@@ -36,7 +36,7 @@ class OrderController extends Controller
             'shipping_address.state' => 'required|string',
             'shipping_address.country' => 'required|string',
             'shipping_address.zip_code' => 'required|string',
-            'payment_method' => 'required|string|in:Credit Card,Bank Transfer,Virtual Account',
+            // 'payment_method' => 'required|string|in:Credit Card,Bank Transfer,Virtual Account', // No longer strictly needed as Midtrans handles method
         ]);
 
         $user = Auth::user();
@@ -56,7 +56,7 @@ class OrderController extends Controller
 
             $order = Order::create([
                 'user_id' => $user->id,
-                'payment_method' => $request->payment_method,
+                'payment_method' => 'Midtrans', // Defaulting to Midtrans
                 'shipping_address' => $request->shipping_address,
                 'total_price' => $totalPrice,
                 'status' => 'pending',
@@ -73,12 +73,53 @@ class OrderController extends Controller
                 ]);
             }
 
+            // --- Midtrans Integration ---
+            // Set your Merchant Server Key
+            \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+            // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
+            \Midtrans\Config::$isProduction = (bool) env('MIDTRANS_IS_PRODUCTION', false);
+            // Set sanitization on (default)
+            \Midtrans\Config::$isSanitized = true;
+            // Set 3DS transaction for credit card to true
+            \Midtrans\Config::$is3ds = true;
+
+            $params = [
+                'transaction_details' => [
+                    'order_id' => $order->id . '-' . time(), // Unique ID
+                    'gross_amount' => (int) $order->total_price,
+                ],
+                'customer_details' => [
+                    'first_name' => $user->name,
+                    'email' => $user->email,
+                ],
+                'item_details' => $cartItems->map(function ($item) {
+                    return [
+                        'id' => $item->product_id,
+                        'price' => (int) $item->product->price,
+                        'quantity' => $item->quantity,
+                        'name' => substr($item->product->title, 0, 50),
+                    ];
+                })->toArray(),
+            ];
+
+            // Get Snap Token
+            $snapToken = \Midtrans\Snap::getSnapToken($params);
+            // Get Payment URL (optional, if using redirect directly)
+            // $paymentUrl = \Midtrans\Snap::createTransaction($params)->redirect_url;
+
+            // --- End Midtrans Integration ---
+
             // Clear cart
             CartItem::where('user_id', $user->id)->delete();
 
             DB::commit();
 
-            return response()->json($order->load('items.product'), 201);
+            return response()->json([
+                'order' => $order->load('items.product'),
+                'snap_token' => $snapToken,
+                // 'payment_url' => $paymentUrl ?? null,
+            ], 201);
+
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['message' => 'Failed to create order', 'error' => $e->getMessage()], 500);

@@ -5,8 +5,22 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
-class ProductController extends Controller
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+
+class ProductController extends Controller implements HasMiddleware
 {
+    /**
+     * Get the middleware that should be assigned to the controller.
+     */
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('permission:create-product', only: ['store']),
+            new Middleware('permission:edit-product', only: ['update']),
+            new Middleware('permission:delete-product', only: ['destroy']),
+        ];
+    }
     /**
      * Display a listing of the resource.
      */

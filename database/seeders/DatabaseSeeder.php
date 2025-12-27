@@ -15,6 +15,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CategorySeeder::class,
             ProductSeeder::class,
+            WishlistSeeder::class, // Added previously if not present
+            NotificationSeeder::class,
         ]);
     }
 }

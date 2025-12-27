@@ -28,4 +28,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('products', \App\Http\Controllers\ProductController::class)->only(['index', 'show']);
     Route::apiResource('cart', \App\Http\Controllers\CartController::class)->only(['index', 'show']);
     Route::apiResource('orders', \App\Http\Controllers\OrderController::class)->only(['index', 'show']);
+
+    Route::get('/wishlist', [\App\Http\Controllers\WishlistController::class, 'index']);
+    Route::post('/wishlist', [\App\Http\Controllers\WishlistController::class, 'store']);
+    Route::delete('/wishlist/{product_id}', [\App\Http\Controllers\WishlistController::class, 'destroy']);
 });

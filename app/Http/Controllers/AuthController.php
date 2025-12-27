@@ -72,6 +72,12 @@ class AuthController extends Controller
             'email' => $validatedData['email'],
         ]);
 
+        $user->sendNotification(
+            'Profile Updated',
+            'Your profile information has been updated successfully.',
+            'account'
+        );
+
         return response()->json([
             'message' => 'Profile updated successfully',
             'user' => $user,

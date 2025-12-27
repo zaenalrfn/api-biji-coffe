@@ -73,6 +73,14 @@ class OrderController extends Controller
                 ]);
             }
 
+            // Send Notification
+            $user->sendNotification(
+                'Order Successful',
+                'Your order #' . $order->id . ' has been successfully placed.',
+                'order',
+                $order->id
+            );
+
             // --- Midtrans Integration ---
             // Set your Merchant Server Key
             \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');

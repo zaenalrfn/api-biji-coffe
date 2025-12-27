@@ -50,4 +50,19 @@ class User extends Authenticatable
     {
         return $this->hasMany(Wishlist::class);
     }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class)->latest();
+    }
+
+    public function sendNotification($title, $body, $type = 'system', $relatedId = null)
+    {
+        return $this->notifications()->create([
+            'title' => $title,
+            'body' => $body,
+            'type' => $type,
+            'related_id' => $relatedId,
+        ]);
+    }
 }

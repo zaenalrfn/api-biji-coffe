@@ -28,7 +28,10 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::get('/user', function (Request $request) {
-        return $request->user();
+        $user = $request->user();
+        return response()->json(array_merge($user->toArray(), [
+            'roles' => $user->getRoleNames()
+        ]));
     });
 
     Route::apiResource('categories', \App\Http\Controllers\CategoryController::class)->only(['index', 'show']);

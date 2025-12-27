@@ -13,6 +13,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            RolePermissionSeeder::class,
+            UserSeeder::class,
             CategorySeeder::class,
             ProductSeeder::class,
             WishlistSeeder::class, // Added previously if not present

@@ -12,7 +12,7 @@ class WishlistController extends Controller
     public function index()
     {
         $wishlists = Wishlist::where('user_id', Auth::id())
-            ->with('product') // Eager load product details
+            ->with('product.category') // Eager load product details
             ->orderBy('created_at', 'desc')
             ->get();
 

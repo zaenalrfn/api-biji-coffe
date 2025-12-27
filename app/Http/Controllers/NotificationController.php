@@ -10,7 +10,7 @@ class NotificationController extends Controller
 {
     public function index()
     {
-        $notifications = Auth::user()->notifications()->get();
+        $notifications = Auth::user()->notifications()->simplePaginate(10);
         return response()->json($notifications);
     }
 
@@ -27,5 +27,12 @@ class NotificationController extends Controller
         Auth::user()->notifications()->update(['is_read' => true]);
 
         return response()->json(['message' => 'All notifications marked as read']);
+    }
+
+    public function deleteAll()
+    {
+        Auth::user()->notifications()->delete();
+
+        return response()->json(['message' => 'All notifications deleted successfully']);
     }
 }

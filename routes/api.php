@@ -8,6 +8,10 @@ Route::middleware(['throttle:write'])->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
 
+    // Google Oauth
+    Route::get('oauth/google', [\App\Http\Controllers\OauthController::class, 'redirectToProvider'])->name('oauth.google');
+    Route::get('oauth/google/callback', [\App\Http\Controllers\OauthController::class, 'handleProviderCallback'])->name('oauth.google.callback');
+
     // Public Midtrans Webhook
     Route::post('/midtrans/callback', [\App\Http\Controllers\MidtransCallbackController::class, 'handle']);
 

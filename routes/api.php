@@ -4,11 +4,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
+/*
+|--------------------------------------------------------------------------
+| Public Routes (Throttle Write)
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['throttle:write'])->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
 
-    // Google Oauth
+    // Google OAuth
     Route::get('oauth/google', [\App\Http\Controllers\OauthController::class, 'redirectToProvider'])->name('oauth.google');
     Route::get('oauth/google/callback', [\App\Http\Controllers\OauthController::class, 'handleProviderCallback'])->name('oauth.google.callback');
 
@@ -24,7 +29,18 @@ Route::middleware(['throttle:write'])->group(function () {
     Route::get('/banners/{id}', [\App\Http\Controllers\BannerController::class, 'show']);
 });
 
+/*
+|--------------------------------------------------------------------------
+| Protected Routes (Auth Sanctum)
+|--------------------------------------------------------------------------
+*/
 Route::middleware('auth:sanctum')->group(function () {
+
+    /*
+    |--------------------------------------------------------------------------
+    | Write Actions (Throttle Write)
+    |--------------------------------------------------------------------------
+    */
     Route::middleware(['throttle:write'])->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::put('/user', [AuthController::class, 'updateProfile']);
@@ -35,6 +51,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('orders', \App\Http\Controllers\OrderController::class)->except(['index', 'show']);
     });
 
+    /*
+    |--------------------------------------------------------------------------
+    | Authenticated User Info
+    |--------------------------------------------------------------------------
+    */
     Route::get('/user', function (Request $request) {
         $user = $request->user();
         return response()->json(array_merge($user->toArray(), [
@@ -42,21 +63,48 @@ Route::middleware('auth:sanctum')->group(function () {
         ]));
     });
 
+    /*
+    |--------------------------------------------------------------------------
+    | Read Only Routes
+    |--------------------------------------------------------------------------
+    */
     Route::apiResource('categories', \App\Http\Controllers\CategoryController::class)->only(['index', 'show']);
     Route::apiResource('products', \App\Http\Controllers\ProductController::class)->only(['index', 'show']);
     Route::apiResource('cart', \App\Http\Controllers\CartController::class)->only(['index', 'show']);
     Route::apiResource('orders', \App\Http\Controllers\OrderController::class)->only(['index', 'show']);
 
+    /*
+    |--------------------------------------------------------------------------
+    | Fitur Chat Order ✅
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/orders/{id}/messages', [\App\Http\Controllers\ChatController::class, 'getMessages']);
+    Route::post('/orders/{id}/messages', [\App\Http\Controllers\ChatController::class, 'sendMessage']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Wishlist
+    |--------------------------------------------------------------------------
+    */
     Route::get('/wishlist', [\App\Http\Controllers\WishlistController::class, 'index']);
     Route::post('/wishlist', [\App\Http\Controllers\WishlistController::class, 'store']);
     Route::delete('/wishlist/{product_id}', [\App\Http\Controllers\WishlistController::class, 'destroy']);
 
+    /*
+    |--------------------------------------------------------------------------
+    | Notifications
+    |--------------------------------------------------------------------------
+    */
     Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index']);
     Route::post('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead']);
     Route::post('/notifications/read-all', [\App\Http\Controllers\NotificationController::class, 'markAllRead']);
     Route::delete('/notifications/delete-all', [\App\Http\Controllers\NotificationController::class, 'deleteAll']);
 
-    // Public Store Routes (View Only)
+    /*
+    |--------------------------------------------------------------------------
+    | Public Store Routes (View Only)
+    |--------------------------------------------------------------------------
+    */
     Route::get('/stores', [\App\Http\Controllers\StoreController::class, 'index']);
     Route::get('/stores/{id}', [\App\Http\Controllers\StoreController::class, 'show']);
 
@@ -76,27 +124,42 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/orders/{id}/update-status', [\App\Http\Controllers\OrderController::class, 'updateStatus']); // Keeping this for backward compatibility or generic use
 
     Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
-        Route::post('/admin/users/{user}/promote', [\App\Http\Controllers\AdminController::class, 'promote']);
+        /*
+        |--------------------------------------------------------------------------
+        | Admin Routes
+        |--------------------------------------------------------------------------
+        */
+        Route::middleware(['role:admin'])->group(function () {
 
-        // Banner Management
-        Route::post('/banners', [\App\Http\Controllers\BannerController::class, 'store']);
-        Route::post('/banners/{id}', [\App\Http\Controllers\BannerController::class, 'update']);
-        Route::delete('/banners/{id}', [\App\Http\Controllers\BannerController::class, 'destroy']);
+            Route::post('/admin/users/{user}/promote', [\App\Http\Controllers\AdminController::class, 'promote']);
 
-        // Store Management
-        Route::post('/stores', [\App\Http\Controllers\StoreController::class, 'store']);
-        Route::post('/stores/{id}', [\App\Http\Controllers\StoreController::class, 'update']);
-        Route::delete('/stores/{id}', [\App\Http\Controllers\StoreController::class, 'destroy']);
+            // Banner Management
+            Route::post('/banners', [\App\Http\Controllers\BannerController::class, 'store']);
+            Route::post('/banners/{id}', [\App\Http\Controllers\BannerController::class, 'update']);
+            Route::delete('/banners/{id}', [\App\Http\Controllers\BannerController::class, 'destroy']);
 
-        // Order Management (Admin)
-        Route::get('/admin/orders', [\App\Http\Controllers\AdminOrderController::class, 'index']);
-        Route::post('/admin/orders/{id}', [\App\Http\Controllers\AdminOrderController::class, 'update']);
-        Route::delete('/admin/orders/{id}', [\App\Http\Controllers\AdminOrderController::class, 'destroy']);
-        Route::post('/admin/orders/{id}/assign-driver', [\App\Http\Controllers\AdminOrderController::class, 'assignDriver']);
+            // Store Management
+            Route::post('/stores', [\App\Http\Controllers\StoreController::class, 'store']);
+            Route::post('/stores/{id}', [\App\Http\Controllers\StoreController::class, 'update']);
+            Route::delete('/stores/{id}', [\App\Http\Controllers\StoreController::class, 'destroy']);
 
-        // Coupon Management (Admin)
-        Route::get('/admin/coupons', [\App\Http\Controllers\CouponController::class, 'index']);
-        Route::post('/admin/coupons', [\App\Http\Controllers\CouponController::class, 'store']);
-        Route::delete('/admin/coupons/{id}', [\App\Http\Controllers\CouponController::class, 'destroy']);
+            // Order Management
+            Route::get('/admin/orders', [\App\Http\Controllers\AdminOrderController::class, 'index']);
+            Route::post('/admin/orders/{id}', [\App\Http\Controllers\AdminOrderController::class, 'update']);
+            Route::delete('/admin/orders/{id}', [\App\Http\Controllers\AdminOrderController::class, 'destroy']);
+            Route::post('/admin/orders/{id}/assign-driver', [\App\Http\Controllers\AdminOrderController::class, 'assignDriver']);
+
+            // Coupon Management
+            Route::get('/admin/coupons', [\App\Http\Controllers\CouponController::class, 'index']);
+            Route::post('/admin/coupons', [\App\Http\Controllers\CouponController::class, 'store']);
+            Route::delete('/admin/coupons/{id}', [\App\Http\Controllers\CouponController::class, 'destroy']);
+        });
+
+        /*
+        |--------------------------------------------------------------------------
+        | Coupon Check (User)
+        |--------------------------------------------------------------------------
+        */
+        Route::post('/check-coupon', [\App\Http\Controllers\CouponController::class, 'check']);
     });
 });

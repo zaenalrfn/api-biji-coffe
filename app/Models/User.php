@@ -26,6 +26,7 @@ class User extends Authenticatable
         'profile_photo_path',
         'gauth_id',
         'gauth_type',
+        'points',
     ];
 
     /**
@@ -84,5 +85,75 @@ class User extends Authenticatable
             'type' => $type,
             'related_id' => $relatedId,
         ]);
+    }
+
+    public function driver()
+    {
+        return $this->hasOne(Driver::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    /**
+     * Add points to user and check for rewards
+     * 
+     * @param int $amount
+     * @return void
+     */
+    public function addPoints($amount)
+    {
+        $this->increment('points', $amount);
+        $this->checkAndGrantReward();
+    }
+
+    /**
+     * Deduct points from user
+     * 
+     * @param int $amount
+     * @return bool
+     */
+    public function deductPoints($amount)
+    {
+        if ($this->points >= $amount) {
+            $this->decrement('points', $amount);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Check if user qualifies for reward and grant 50% discount coupon
+     * 
+     * @return void
+     */
+    public function checkAndGrantReward()
+    {
+        if ($this->points >= 10) {
+            // Create 50% discount coupon for admin to issue to user
+            $couponCode = 'PBC50-' . strtoupper(substr(md5($this->id . time()), 0, 6));
+
+            Coupon::create([
+                'code' => $couponCode,
+                'type' => 'percentage',
+                'value' => 50,
+                'min_purchase' => 0,
+                'expires_at' => now()->addDays(30),
+                'is_active' => true,
+            ]);
+
+            // Deduct 10 points
+            $this->decrement('points', 10);
+
+            // Send notification to user
+            $this->sendNotification(
+                'Selamat! Anda mendapat kupon diskon 50%!',
+                'Gunakan kode: ' . $couponCode . ' untuk diskon 50% di semua produk. Berlaku 30 hari.',
+                'reward',
+                null
+            );
+        }
     }
 }

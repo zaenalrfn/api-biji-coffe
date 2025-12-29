@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
             WishlistSeeder::class, // Added previously if not present
             NotificationSeeder::class,
+            DriverSeeder::class,
         ]);
     }
 }

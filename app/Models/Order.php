@@ -18,6 +18,7 @@ class Order extends Model
         'payment_status',
         'transaction_id',
         'snap_token',
+        'driver_id',
     ];
 
     protected $casts = [
@@ -29,8 +30,18 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function driver()
+    {
+        return $this->belongsTo(Driver::class);
+    }
+
     public function items()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function messages()
+    {
+        return $this->hasMany(OrderMessage::class);
     }
 }

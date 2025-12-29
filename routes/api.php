@@ -60,7 +60,21 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/stores', [\App\Http\Controllers\StoreController::class, 'index']);
     Route::get('/stores/{id}', [\App\Http\Controllers\StoreController::class, 'show']);
 
-    // Protected Routes (Admin)
+    // Coupon Check (User)
+    Route::post('/check-coupon', [\App\Http\Controllers\CouponController::class, 'check']);
+
+    // Driver & Delivery Routes
+    Route::get('/drivers', [\App\Http\Controllers\DriverController::class, 'index']); // Get all active drivers
+    Route::get('/drivers/{id}/location', [\App\Http\Controllers\DriverController::class, 'getLocation']);
+    Route::post('/drivers/{id}/location', [\App\Http\Controllers\DriverController::class, 'updateLocation']); // Update location
+
+    // Driver Dashboard Routes (New Request)
+    Route::get('/driver/orders', [\App\Http\Controllers\DriverOrderController::class, 'index']);
+    Route::post('/driver/orders/{id}/status', [\App\Http\Controllers\DriverOrderController::class, 'updateStatus']);
+
+    // Order Status Update (Driver/User/Admin)
+    Route::post('/orders/{id}/update-status', [\App\Http\Controllers\OrderController::class, 'updateStatus']); // Keeping this for backward compatibility or generic use
+
     Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
         Route::post('/admin/users/{user}/promote', [\App\Http\Controllers\AdminController::class, 'promote']);
 
@@ -78,13 +92,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/admin/orders', [\App\Http\Controllers\AdminOrderController::class, 'index']);
         Route::post('/admin/orders/{id}', [\App\Http\Controllers\AdminOrderController::class, 'update']);
         Route::delete('/admin/orders/{id}', [\App\Http\Controllers\AdminOrderController::class, 'destroy']);
+        Route::post('/admin/orders/{id}/assign-driver', [\App\Http\Controllers\AdminOrderController::class, 'assignDriver']);
 
         // Coupon Management (Admin)
         Route::get('/admin/coupons', [\App\Http\Controllers\CouponController::class, 'index']);
         Route::post('/admin/coupons', [\App\Http\Controllers\CouponController::class, 'store']);
         Route::delete('/admin/coupons/{id}', [\App\Http\Controllers\CouponController::class, 'destroy']);
     });
-
-    // Coupon Check (User)
-    Route::post('/check-coupon', [\App\Http\Controllers\CouponController::class, 'check']);
 });

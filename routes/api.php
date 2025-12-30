@@ -10,21 +10,24 @@ use App\Http\Controllers\AuthController;
 |--------------------------------------------------------------------------
 */
 Route::middleware(['throttle:write'])->group(function () {
+
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
 
     // Google OAuth
-    Route::get('oauth/google', [\App\Http\Controllers\OauthController::class, 'redirectToProvider'])->name('oauth.google');
-    Route::get('oauth/google/callback', [\App\Http\Controllers\OauthController::class, 'handleProviderCallback'])->name('oauth.google.callback');
+    Route::get('oauth/google', [\App\Http\Controllers\OauthController::class, 'redirectToProvider'])
+        ->name('oauth.google');
+    Route::get('oauth/google/callback', [\App\Http\Controllers\OauthController::class, 'handleProviderCallback'])
+        ->name('oauth.google.callback');
 
-    // Public Midtrans Webhook
+    // Midtrans Webhook
     Route::post('/midtrans/callback', [\App\Http\Controllers\MidtransCallbackController::class, 'handle']);
 
     // Password Reset
     Route::post('/forgot-password', [\App\Http\Controllers\ResetPasswordController::class, 'forgotPassword']);
     Route::post('/reset-password', [\App\Http\Controllers\ResetPasswordController::class, 'resetPassword']);
 
-    // Public Banner Routes
+    // Public Banner
     Route::get('/banners', [\App\Http\Controllers\BannerController::class, 'index']);
     Route::get('/banners/{id}', [\App\Http\Controllers\BannerController::class, 'show']);
 });
@@ -42,13 +45,18 @@ Route::middleware('auth:sanctum')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::middleware(['throttle:write'])->group(function () {
+
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::put('/user', [AuthController::class, 'updateProfile']);
 
-        Route::apiResource('categories', \App\Http\Controllers\CategoryController::class)->except(['index', 'show']);
-        Route::apiResource('products', \App\Http\Controllers\ProductController::class)->except(['index', 'show']);
-        Route::apiResource('cart', \App\Http\Controllers\CartController::class)->except(['index', 'show']);
-        Route::apiResource('orders', \App\Http\Controllers\OrderController::class)->except(['index', 'show']);
+        Route::apiResource('categories', \App\Http\Controllers\CategoryController::class)
+            ->except(['index', 'show']);
+        Route::apiResource('products', \App\Http\Controllers\ProductController::class)
+            ->except(['index', 'show']);
+        Route::apiResource('cart', \App\Http\Controllers\CartController::class)
+            ->except(['index', 'show']);
+        Route::apiResource('orders', \App\Http\Controllers\OrderController::class)
+            ->except(['index', 'show']);
     });
 
     /*
@@ -58,9 +66,10 @@ Route::middleware('auth:sanctum')->group(function () {
     */
     Route::get('/user', function (Request $request) {
         $user = $request->user();
-        return response()->json(array_merge($user->toArray(), [
-            'roles' => $user->getRoleNames()
-        ]));
+        return response()->json(array_merge(
+            $user->toArray(),
+            ['roles' => $user->getRoleNames()]
+        ));
     });
 
     /*
@@ -68,18 +77,23 @@ Route::middleware('auth:sanctum')->group(function () {
     | Read Only Routes
     |--------------------------------------------------------------------------
     */
-    Route::apiResource('categories', \App\Http\Controllers\CategoryController::class)->only(['index', 'show']);
-    Route::apiResource('products', \App\Http\Controllers\ProductController::class)->only(['index', 'show']);
-    Route::apiResource('cart', \App\Http\Controllers\CartController::class)->only(['index', 'show']);
-    Route::apiResource('orders', \App\Http\Controllers\OrderController::class)->only(['index', 'show']);
+    Route::apiResource('categories', \App\Http\Controllers\CategoryController::class)
+        ->only(['index', 'show']);
+    Route::apiResource('products', \App\Http\Controllers\ProductController::class)
+        ->only(['index', 'show']);
+    Route::apiResource('cart', \App\Http\Controllers\CartController::class)
+        ->only(['index', 'show']);
+    Route::apiResource('orders', \App\Http\Controllers\OrderController::class)
+        ->only(['index', 'show']);
 
     /*
     |--------------------------------------------------------------------------
-    | Fitur Chat Order ✅
+    | Chat Order ✅
     |--------------------------------------------------------------------------
     */
     Route::get('/orders/{id}/messages', [\App\Http\Controllers\ChatController::class, 'getMessages']);
     Route::post('/orders/{id}/messages', [\App\Http\Controllers\ChatController::class, 'sendMessage']);
+    Route::get('/chat-list', [\App\Http\Controllers\ChatController::class, 'getChatList']);
 
     /*
     |--------------------------------------------------------------------------
@@ -102,7 +116,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Public Store Routes (View Only)
+    | Store (View Only)
     |--------------------------------------------------------------------------
     */
     Route::get('/stores', [\App\Http\Controllers\StoreController::class, 'index']);
@@ -117,22 +131,22 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::post('/admin/users/{user}/promote', [\App\Http\Controllers\AdminController::class, 'promote']);
 
-        // Banner Management
+        // Banner
         Route::post('/banners', [\App\Http\Controllers\BannerController::class, 'store']);
         Route::post('/banners/{id}', [\App\Http\Controllers\BannerController::class, 'update']);
         Route::delete('/banners/{id}', [\App\Http\Controllers\BannerController::class, 'destroy']);
 
-        // Store Management
+        // Store
         Route::post('/stores', [\App\Http\Controllers\StoreController::class, 'store']);
         Route::post('/stores/{id}', [\App\Http\Controllers\StoreController::class, 'update']);
         Route::delete('/stores/{id}', [\App\Http\Controllers\StoreController::class, 'destroy']);
 
-        // Order Management
+        // Orders
         Route::get('/admin/orders', [\App\Http\Controllers\AdminOrderController::class, 'index']);
         Route::post('/admin/orders/{id}', [\App\Http\Controllers\AdminOrderController::class, 'update']);
         Route::delete('/admin/orders/{id}', [\App\Http\Controllers\AdminOrderController::class, 'destroy']);
 
-        // Coupon Management
+        // Coupons
         Route::get('/admin/coupons', [\App\Http\Controllers\CouponController::class, 'index']);
         Route::post('/admin/coupons', [\App\Http\Controllers\CouponController::class, 'store']);
         Route::delete('/admin/coupons/{id}', [\App\Http\Controllers\CouponController::class, 'destroy']);
@@ -140,7 +154,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Coupon Check (User)
+    | Coupon Check
     |--------------------------------------------------------------------------
     */
     Route::post('/check-coupon', [\App\Http\Controllers\CouponController::class, 'check']);

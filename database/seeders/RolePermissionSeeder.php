@@ -17,18 +17,21 @@ class RolePermissionSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Create permissions
-        Permission::create(['name' => 'create-product']);
-        Permission::create(['name' => 'edit-product']);
-        Permission::create(['name' => 'delete-product']);
+        Permission::firstOrCreate(['name' => 'create-product']);
+        Permission::firstOrCreate(['name' => 'edit-product']);
+        Permission::firstOrCreate(['name' => 'delete-product']);
 
         // Create other permissions if needed, but for now focusing on products
 
         // Create Roles and assign permissions
-        $roleAdmin = Role::create(['name' => 'admin']);
+        $roleAdmin = Role::firstOrCreate(['name' => 'admin']);
         $roleAdmin->givePermissionTo(Permission::all());
 
-        $roleUser = Role::create(['name' => 'user']);
+        $roleUser = Role::firstOrCreate(['name' => 'user']);
         // User gets NO product management permissions
+
+        $roleDriver = Role::firstOrCreate(['name' => 'driver']);
+        // Driver specific permissions can be added later
 
         // If there are other routes that 'user' needs access to that are currently gated, 
         // we might need to check. But assuming standard auth covers them.

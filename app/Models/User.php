@@ -86,4 +86,9 @@ class User extends Authenticatable
             'related_id' => $relatedId,
         ]);
     }
+
+    public function driver()
+    {
+        return $this->hasOne(Driver::class);
+    }
 }

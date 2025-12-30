@@ -24,6 +24,8 @@ class User extends Authenticatable
         'email',
         'password',
         'profile_photo_path',
+        'gauth_id',
+        'gauth_type',
     ];
 
     /**
@@ -82,5 +84,10 @@ class User extends Authenticatable
             'type' => $type,
             'related_id' => $relatedId,
         ]);
+    }
+
+    public function driver()
+    {
+        return $this->hasOne(Driver::class);
     }
 }

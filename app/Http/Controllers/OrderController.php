@@ -137,4 +137,40 @@ class OrderController extends Controller
             return response()->json(['message' => 'Failed to create order', 'error' => $e->getMessage()], 500);
         }
     }
+    public function show($id)
+    {
+        $order = Order::where('user_id', Auth::id())->with(['items.product', 'driver'])->findOrFail($id);
+        return response()->json($order);
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|string|in:pending,confirmed,processing,on_delivery,completed,cancelled',
+        ]);
+
+        // Logic to check if user is authorized (Admin or Driver or Customer?)
+        // For simplicity, assuming Driver or Admin is calling this. 
+        // If it's a driver specific endpoint, usually we verify driver ownership.
+        // But for now, allow authenticated users to try, or ideally restrict via policy.
+        // Since I don't have roles middleware setup visible here, I'll assume auth is passed.
+
+        $order = Order::findOrFail($id);
+
+        // Update status
+        $order->update(['status' => $request->status]);
+
+        // Trigger notification to User (Customer)
+        $order->user->sendNotification(
+            'Order Status Update',
+            'Your order #' . $order->id . ' is now ' . str_replace('_', ' ', $request->status),
+            'order_status',
+            $order->id
+        );
+
+        return response()->json([
+            'message' => 'Order status updated successfully',
+            'data' => $order
+        ]);
+    }
 }

@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 class ChatController extends Controller
 {
     /**
-     * Kirim pesan chat
+     * KIRIM PESAN
      */
     public function sendMessage(Request $request, $id)
     {
@@ -19,76 +19,55 @@ class ChatController extends Controller
             'message' => 'required|string'
         ]);
 
-        // Ambil order + relasi
         $order = Order::with(['user', 'driver.user'])->findOrFail($id);
         $sender = Auth::user();
 
-        // Tentukan penerima
-        $recipient = null;
-
-        if ($sender->id === $order->user_id) {
-            // Pengirim adalah customer
-            $recipient = $order->driver?->user;
-        } elseif ($sender->id === $order->driver?->user_id) {
-            // Pengirim adalah driver
-            $recipient = $order->user;
-        }
-
-        if (!$recipient) {
-            return response()->json([
-                'message' => 'Chat belum tersedia (Driver belum di-assign)'
-            ], 400);
+        // Authorization (customer / driver saja)
+        if (
+            $sender->id !== $order->user_id &&
+            $sender->id !== $order->driver?->user_id
+        ) {
+            return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         // Simpan pesan
         $message = OrderMessage::create([
             'order_id'  => $order->id,
             'sender_id' => $sender->id,
-            'message'   => $request->message
+            'message'   => $request->message,
         ]);
 
-        // Load sender untuk realtime
+        // Load sender (buat Flutter)
         $message->load('sender:id,name');
 
-        // Broadcast realtime
+        // 🔥 REALTIME REVERB
         broadcast(new MessageSent($message))->toOthers();
-
-        // Kirim notifikasi
-        $recipient->sendNotification(
-            'Pesan baru dari ' . $sender->name,
-            $request->message,
-            'chat_message',
-            $order->id
-        );
 
         return response()->json($message, 201);
     }
 
     /**
-     * Ambil semua pesan dalam satu order
+     * AMBIL CHAT DETAIL
      */
     public function getMessages($id)
     {
         $order = Order::with('driver')->findOrFail($id);
 
-        $driverUserId = $order->driver?->user_id;
-
-        // Authorization
         if (
             Auth::id() !== $order->user_id &&
-            Auth::id() !== $driverUserId
+            Auth::id() !== $order->driver?->user_id
         ) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         return OrderMessage::where('order_id', $order->id)
             ->with('sender:id,name')
-            ->orderBy('created_at', 'asc')
+            ->orderBy('created_at')
             ->get();
     }
 
     /**
-     * Ambil daftar chat (chat list)
+     * CHAT LIST
      */
     public function getChatList()
     {
@@ -97,35 +76,31 @@ class ChatController extends Controller
         $orders = Order::with([
                 'user',
                 'driver.user',
-                'messages' => function ($query) {
-                    $query->latest();
-                }
+                'messages' => fn ($q) => $q->latest()
             ])
-            ->where(function ($query) use ($user) {
-                $query->where('user_id', $user->id)
-                      ->orWhereHas('driver', function ($q) use ($user) {
-                          $q->where('user_id', $user->id);
-                      });
+            ->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                  ->orWhereHas('driver', fn ($d) =>
+                      $d->where('user_id', $user->id)
+                  );
             })
             ->has('messages')
             ->get()
             ->map(function ($order) use ($user) {
-                $participant = ($user->id === $order->user_id)
+                $participant = $user->id === $order->user_id
                     ? $order->driver?->user
                     : $order->user;
 
-                $lastMessage = $order->messages->first();
+                $last = $order->messages->first();
 
                 return [
-                    'order_id'    => $order->id,
-                    'name'        => $participant?->name ?? 'Unknown',
-                    'avatar'      => $participant && $participant->profile_photo_path
+                    'order_id' => $order->id,
+                    'name'     => $participant?->name ?? 'Unknown',
+                    'avatar'   => $participant?->profile_photo_path
                         ? asset('storage/' . $participant->profile_photo_path)
                         : null,
-                    'last_message'=> $lastMessage?->message ?? '',
-                    'time'        => $lastMessage
-                        ? $lastMessage->created_at->diffForHumans()
-                        : '',
+                    'last_message' => $last?->message ?? '',
+                    'time' => $last?->created_at->diffForHumans() ?? '',
                 ];
             });
 

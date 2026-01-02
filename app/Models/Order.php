@@ -11,6 +11,7 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
+        'driver_id', // Add this
         'payment_method',
         'shipping_address',
         'total_price',
@@ -37,5 +38,10 @@ class Order extends Model
     public function messages()
     {
         return $this->hasMany(OrderMessage::class);
+    }
+
+    public function driver()
+    {
+        return $this->belongsTo(Driver::class);
     }
 }

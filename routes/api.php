@@ -94,6 +94,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/orders/{id}/messages', [\App\Http\Controllers\ChatController::class, 'getMessages']);
     Route::post('/orders/{id}/messages', [\App\Http\Controllers\ChatController::class, 'sendMessage']);
     Route::get('/chat-list', [\App\Http\Controllers\ChatController::class, 'getChatList']);
+    Broadcast::routes(['middleware' => ['auth:sanctum']]);
 
     /*
     |--------------------------------------------------------------------------

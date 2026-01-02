@@ -19,6 +19,10 @@ Route::middleware(['throttle:write'])->group(function () {
         ->name('oauth.google');
     Route::get('oauth/google/callback', [\App\Http\Controllers\OauthController::class, 'handleProviderCallback'])
         ->name('oauth.google.callback');
+    Route::get('oauth/google', [\App\Http\Controllers\OauthController::class, 'redirectToProvider'])->name('oauth.google');
+    Route::get('oauth/google/callback', [\App\Http\Controllers\OauthController::class, 'handleProviderCallback'])->name('oauth.google.callback');
+    // Guest Login
+    Route::post('/login/guest', [AuthController::class, 'loginGuest']);
 
     // Midtrans Webhook
     Route::post('/midtrans/callback', [\App\Http\Controllers\MidtransCallbackController::class, 'handle']);

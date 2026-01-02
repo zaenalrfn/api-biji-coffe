@@ -176,10 +176,27 @@ class OrderController extends Controller
         // But for now, allow authenticated users to try, or ideally restrict via policy.
         // Since I don't have roles middleware setup visible here, I'll assume auth is passed.
 
-        $order = Order::findOrFail($id);
+        $order = Order::with('items')->findOrFail($id);
+        $previousStatus = $order->status;
 
         // Update status
         $order->update(['status' => $request->status]);
+
+        // Award points when order is completed (2 PBC per product)
+        if ($request->status === 'completed' && $previousStatus !== 'completed') {
+            $totalProducts = $order->items->sum('quantity');
+            $pointsEarned = $totalProducts * 2; // 2 PBC per product
+
+            $order->user->addPoints($pointsEarned);
+
+            // Send notification about points earned
+            $order->user->sendNotification(
+                'Poin Berhasil Ditambahkan!',
+                'Anda mendapat ' . $pointsEarned . ' PBC dari pesanan #' . $order->id . '. Total poin: ' . $order->user->fresh()->points . ' PBC',
+                'points',
+                $order->id
+            );
+        }
 
         // Trigger notification to User (Customer)
         $order->user->sendNotification(

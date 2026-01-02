@@ -44,9 +44,26 @@ class DriverOrderController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        $order = Order::where('id', $id)->where('driver_id', $driver->id)->firstOrFail();
+        $order = Order::with('items')->where('id', $id)->where('driver_id', $driver->id)->firstOrFail();
+        $previousStatus = $order->status;
         $order->status = $request->status;
         $order->save();
+
+        // Award points when order is completed (2 PBC per product)
+        if ($request->status === 'completed' && $previousStatus !== 'completed') {
+            $totalProducts = $order->items->sum('quantity');
+            $pointsEarned = $totalProducts * 2; // 2 PBC per product
+
+            $order->user->addPoints($pointsEarned);
+
+            // Send notification about points earned
+            $order->user->sendNotification(
+                'Poin Berhasil Ditambahkan!',
+                'Anda mendapat ' . $pointsEarned . ' PBC dari pesanan #' . $order->id . '. Total poin: ' . $order->user->fresh()->points . ' PBC',
+                'points',
+                $order->id
+            );
+        }
 
         // Optional: Notify customer
         if ($order->user) {

@@ -104,13 +104,22 @@ Route::middleware('auth:sanctum')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
+    | Points & Rewards
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/points', [\App\Http\Controllers\PointController::class, 'index']);
+    Route::get('/rewards', [\App\Http\Controllers\RewardController::class, 'index']);
+
+    /*
+    |--------------------------------------------------------------------------
     | Public Store Routes (View Only)
     |--------------------------------------------------------------------------
     */
     Route::get('/stores', [\App\Http\Controllers\StoreController::class, 'index']);
     Route::get('/stores/{id}', [\App\Http\Controllers\StoreController::class, 'show']);
 
-    // Coupon Check (User)
+    // Coupon Routes (User)
+    Route::get('/coupons', [\App\Http\Controllers\CouponController::class, 'index']); // List coupons
     Route::post('/check-coupon', [\App\Http\Controllers\CouponController::class, 'check']);
 
     // Driver & Delivery Routes
@@ -162,6 +171,6 @@ Route::middleware('auth:sanctum')->group(function () {
         | Coupon Check (User)
         |--------------------------------------------------------------------------
         */
-        Route::post('/check-coupon', [\App\Http\Controllers\CouponController::class, 'check']);
+
     });
 });

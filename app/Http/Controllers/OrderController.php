@@ -46,8 +46,28 @@ class OrderController extends Controller
         }
 
         $totalPrice = 0;
+        $orderItemsData = []; // Store calculated data to reuse
+
         foreach ($cartItems as $item) {
-            $totalPrice += $item->product->price * $item->quantity;
+            $basePrice = $item->product->price;
+            $multiplier = match ($item->size) {
+                'SM' => 0.9,
+                'MD' => 1.0,
+                'LG' => 1.2,
+                'XL' => 1.3,
+                default => 1.0,
+            };
+            $finalPrice = $basePrice * $multiplier;
+            $totalPrice += $finalPrice * $item->quantity;
+
+            $orderItemsData[] = [
+                'product_id' => $item->product_id,
+                'quantity' => $item->quantity,
+                'price' => $finalPrice,
+                'notes' => $item->notes,
+                'size' => $item->size ?? 'MD', // Ensure size is recorded
+                'name' => $item->product->title, // Carry product name for Midtrans
+            ];
         }
 
         try {
@@ -59,19 +79,20 @@ class OrderController extends Controller
                 'user_id' => $user->id,
                 'payment_method' => 'Midtrans',
                 'shipping_address' => $request->shipping_address,
-                'total_price' => $totalPrice,
+                'total_price' => $totalPrice, // Uses the size-adjusted total
                 'status' => 'pending',
                 'payment_status' => 'unpaid',
                 'transaction_id' => $transactionId,
             ]);
 
-            foreach ($cartItems as $item) {
+            foreach ($orderItemsData as $data) {
                 OrderItem::create([
                     'order_id' => $order->id,
-                    'product_id' => $item->product_id,
-                    'quantity' => $item->quantity,
-                    'price' => $item->product->price,
-                    'notes' => $item->notes,
+                    'product_id' => $data['product_id'],
+                    'quantity' => $data['quantity'],
+                    'price' => $data['price'], // Adjusted price
+                    'notes' => $data['notes'],
+                    'size' => $data['size'],
                 ]);
             }
 
@@ -98,14 +119,14 @@ class OrderController extends Controller
                     'first_name' => $user->name,
                     'email' => $user->email,
                 ],
-                'item_details' => $cartItems->map(function ($item) {
+                'item_details' => array_map(function ($item) {
                     return [
-                        'id' => $item->product_id,
-                        'price' => (int) $item->product->price,
-                        'quantity' => $item->quantity,
-                        'name' => substr($item->product->title, 0, 50),
+                        'id' => $item['product_id'],
+                        'price' => (int) $item['price'],
+                        'quantity' => $item['quantity'],
+                        'name' => substr($item['name'] . ' (' . $item['size'] . ')', 0, 50), // Include size in name
                     ];
-                })->toArray(),
+                }, $orderItemsData),
             ];
 
             $snapToken = \Midtrans\Snap::getSnapToken($params);

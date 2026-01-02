@@ -26,6 +26,7 @@ class User extends Authenticatable
         'profile_photo_path',
         'gauth_id',
         'gauth_type',
+        'is_guest',
         'points',
     ];
 

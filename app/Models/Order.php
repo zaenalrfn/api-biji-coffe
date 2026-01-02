@@ -11,7 +11,7 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
-        'driver_id', // Add this
+        'driver_id',
         'payment_method',
         'shipping_address',
         'total_price',

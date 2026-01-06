@@ -11,6 +11,7 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
+        'driver_id', // Add this
         'payment_method',
         'shipping_address',
         'total_price',
@@ -18,7 +19,7 @@ class Order extends Model
         'payment_status',
         'transaction_id',
         'snap_token',
-        'driver_id',
+
     ];
 
     protected $casts = [
@@ -44,4 +45,6 @@ class Order extends Model
     {
         return $this->hasMany(OrderMessage::class);
     }
+
+
 }

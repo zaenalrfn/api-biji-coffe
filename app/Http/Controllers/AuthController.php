@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -97,6 +98,30 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Profile updated successfully',
+            'user' => array_merge($user->toArray(), ['roles' => $user->getRoleNames()]),
+        ]);
+    }
+
+    public function loginGuest()
+    {
+        $uuid = (string) Str::uuid();
+
+        $user = User::create([
+            'name' => 'Guest User',
+            'email' => 'guest_' . $uuid . '@bijicoffee.com',
+            'password' => Hash::make(Str::random(16)),
+            'is_guest' => true,
+            'email_verified_at' => now(), // Auto verify for guest
+        ]);
+
+        $user->assignRole('user');
+
+        $token = $user->createToken('guest_token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Logged in as Guest',
+            'access_token' => $token,
+            'token_type' => 'Bearer',
             'user' => array_merge($user->toArray(), ['roles' => $user->getRoleNames()]),
         ]);
     }

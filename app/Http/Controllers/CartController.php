@@ -26,12 +26,16 @@ class CartController extends Controller
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
             'notes' => 'nullable|string',
+            'size' => 'nullable|in:SM,MD,LG,XL', // Validate size
         ]);
+
+        $size = $request->size ?? 'MD'; // Default size
 
         $cartItem = CartItem::updateOrCreate(
             [
                 'user_id' => Auth::id(),
                 'product_id' => $request->product_id,
+                'size' => $size, // Unique item per size
             ],
             [
                 'quantity' => \DB::raw('quantity + ' . $request->quantity),
@@ -59,11 +63,12 @@ class CartController extends Controller
         $request->validate([
             'quantity' => 'integer|min:1',
             'notes' => 'nullable|string',
+            'size' => 'nullable|in:SM,MD,LG,XL',
         ]);
 
         $cartItem = CartItem::where('user_id', Auth::id())->findOrFail($id);
 
-        $cartItem->update($request->only('quantity', 'notes'));
+        $cartItem->update($request->only('quantity', 'notes', 'size'));
 
         return response()->json($cartItem);
     }

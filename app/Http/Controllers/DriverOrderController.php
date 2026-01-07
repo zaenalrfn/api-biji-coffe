@@ -25,6 +25,10 @@ class DriverOrderController extends Controller
         // Ambil order yang assigned ke driver ini DAN statusnya bukan cancelled
         $orders = Order::where('driver_id', $driver->id)
             ->whereIn('status', ['confirmed', 'processing', 'on_delivery', 'completed'])
+            ->with([
+                'user:id,name,email,profile_photo_path',  // ← Load customer data
+                'items.product:id,title,price,image',   // ← Load order items
+            ])
             ->orderBy('created_at', 'desc')
             ->get();
         return response()->json(['data' => $orders]);
